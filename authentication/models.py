@@ -35,7 +35,7 @@ class User(AbstractUser):
 
 class OtpToken(models.Model):
 
-    class OtpPurpose(models.TextField):
+    class OtpPurpose(models.TextChoices):
         AUTHENTICATION = "AUTHENTICATION", "Authentication"
         PASSWORD_RESET = "PASSWORD_RESET", "Reset password"
         CHANGE_EMAIL = "CHANGE_EMAIL", "Change Email"
