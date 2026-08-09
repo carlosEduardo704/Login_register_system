@@ -35,8 +35,15 @@ class User(AbstractUser):
 
 class OtpToken(models.Model):
 
+    class OtpPurpose(models.TextField):
+        AUTHENTICATION = "AUTHENTICATION", "Authentication"
+        PASSWORD_RESET = "PASSWORD_RESET", "Reset password"
+        CHANGE_EMAIL = "CHANGE_EMAIL", "Change Email"
+
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     otp_token = models.CharField(max_length=6, default=generate_otp_token)
+    purpose = models.CharField(max_length=20, choices=OtpPurpose.choices)
+    created_at = models.DateTimeField(auto_now_add=True)
     otp_expires_at = models.DateTimeField(
         blank=True,
         null=True,
@@ -46,13 +53,18 @@ class OtpToken(models.Model):
     
 
     @classmethod
-    def generate_new_otp_token(cls, user):
-        code = cls.objects.create(user=user)
+    def generate_new_otp_token(cls, user, purpose):
+        code = cls.objects.create(user=user, purpose=purpose)
         return code
 
+    def otp_expired(self):
+        return self.otp_expires_at > timezone.now()
 
-    def is_expirate(self):
-        return timezone.now() >= self.otp_expires_at
+    def is_valid(self, otp_token):
+        return (
+            not self.used
+            and not self.otp_expired()
+        )
     
 
     def __str__(self):
