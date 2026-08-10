@@ -58,7 +58,7 @@ class OtpToken(models.Model):
         return code
 
     def otp_expired(self):
-        return self.otp_expires_at > timezone.now()
+        return timezone.now() > self.otp_expires_at 
 
     def is_valid(self, otp_token):
         return (
