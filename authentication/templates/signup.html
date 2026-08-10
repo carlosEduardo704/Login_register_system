@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Register{% endblock %}
+
+{% block content %}
+  {% if step  == 1 %}
+    <h2>Hello!</h2>
+    <h3>Get an acess code by email</h3>
+     
+  {% elif step == 2 %}
+    <h2>Enter the code sent to your email</h2>
+  {% elif step == 3%}
+    <h2>Create your password</h2>
+  {% endif %}
+
+
+
+  <form method="post">
+    {% csrf_token %}
+    <input type="hidden" name="step" value="{{ step }}">
+    {{form.as_p}}
+
+    {% if step == 1 %}
+        <button type="submit">Send</button>
+    {% elif step == 2 %}
+        <button type="submit">Confirm</button>
+    {% else%}
+        <button type="submit">Create account</button>
+    {% endif %}
+      
+  </form>
+
+  <div class="link">
+    <p>Already have an account? <a href="{% url 'login' %}">Login</a></p>
+  </div>
+
+{% endblock %}
