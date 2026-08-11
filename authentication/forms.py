@@ -81,6 +81,7 @@ class ForgetPasswordForm(forms.Form):
     email = forms.EmailField()
 
     def clean(self):
+        cleaned_data = super().clean()
         email = self.cleaned_data["email"]
 
         try:
@@ -88,7 +89,7 @@ class ForgetPasswordForm(forms.Form):
         except ValidationError:
             raise forms.ValidationError("Invalid email format!")
 
-        return email
+        return cleaned_data
     
     class Meta:
         fields = ["email"]

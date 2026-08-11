@@ -1,11 +1,21 @@
 from django.shortcuts import redirect, render
+# Views
 from django.views.generic import TemplateView, View
-from .services.signup import start_signup
-from authentication.models import OtpToken, User
-from django.contrib.auth import login
-from authentication.forms import SignupForm, OtpTokenForm, CreatePasswordForm, ForgetPasswordForm
 from django.contrib.auth.views import LoginView
-from django.urls.base import reverse_lazy
+# Forms
+from authentication.forms import SignupForm, OtpTokenForm, CreatePasswordForm, ForgetPasswordForm
+# Models
+from authentication.models import OtpToken, User
+# Others
+from .services.signup import start_signup
+from django.contrib.auth import login
+from django.urls.base import reverse_lazy, reverse
+
+from django.contrib.auth.tokens import default_token_generator
+from django.utils.encoding import force_str
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes
+
 
 class HomePageView(TemplateView):
     template_name = 'home_page.html'
@@ -159,4 +169,38 @@ class ForgetPasswordView(TemplateView):
     def get(self, request, *args, **kwargs):
         form = ForgetPasswordForm()
 
-        return render(request, self.template_name, {"form": form})
+        return render(request, self.template_name, {"form": form, "step": 1})
+
+    def post(self, request, *args, **kwargs):
+        step = int(request.POST.get('step', 1))
+        
+        if step == 1:
+            form = ForgetPasswordForm(request.POST)
+
+            if form.is_valid():
+                typed_email = form.cleaned_data["email"]
+                user = User.objects.filter(email=typed_email).first()
+
+                if user:
+                    token = default_token_generator.make_token(user)
+                    uid = urlsafe_base64_encode(force_bytes(user.pk))
+
+                    path = reverse(
+                        "reset_password",
+                        kwargs={
+                            "uidb64": uid,
+                            "token": token,
+                        },
+                    )
+
+                    reset_url = request.build_absolute_uri(path)
+                    print(f"\n\n{reset_url}\n\n")
+                    # Aqui escrevei o codigo que vai enviar o link por email
+
+                
+                return render(request, self.template_name, {"step": 2})
+        
+        return render(request, self.template_name, {"form": form, "step": 1})
+
+
+

@@ -24,7 +24,7 @@ def start_signup(email):
     purpose = OtpToken.OtpPurpose.AUTHENTICATION
     otp_token = OtpToken.generate_new_otp_token(user, purpose)
     
-    # send_email_otp(user.email, otp_token)
+    send_email_otp(user.email, otp_token)
 
 
     return user

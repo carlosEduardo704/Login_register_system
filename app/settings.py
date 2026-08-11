@@ -125,6 +125,10 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
+# Password reset expired
+PASSWORD_RESET_TIMEOUT = 1200
+
+# User model
 AUTH_USER_MODEL = 'authentication.User'
 
 
