@@ -10,6 +10,7 @@ from authentication.models import OtpToken, User
 from .services.signup import start_signup
 from django.contrib.auth import login
 from django.urls.base import reverse_lazy, reverse
+from authentication.services.emails.send_email_service import send_reset_password_link
 
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.encoding import force_str
@@ -194,8 +195,8 @@ class ForgetPasswordView(TemplateView):
                     )
 
                     reset_url = request.build_absolute_uri(path)
-                    print(f"\n\n{reset_url}\n\n")
-                    # Aqui escrevei o codigo que vai enviar o link por email
+                    
+                    send_reset_password_link(user.email, reset_url)
 
                 
                 return render(request, self.template_name, {"step": 2})

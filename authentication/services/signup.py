@@ -1,5 +1,5 @@
 from authentication.models import User, OtpToken
-from .emails.send_email_otp_token_service import send_email_otp
+from .emails.send_email_service import send_email_otp
 
 
 def start_signup(email):
