@@ -1,7 +1,40 @@
 from django import forms
+from django.contrib.auth.forms import AuthenticationForm, SetPasswordForm
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
-from django.contrib.auth.password_validation import validate_password 
+from django.contrib.auth.password_validation import validate_password
+
+
+
+class CustomAuthenticationForm(AuthenticationForm):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        
+        self.fields['username'].widget.attrs.update({
+            "class": "form-input",
+            'placeholder': 'Username'
+        })
+        self.fields['password'].widget.attrs.update({
+            "class": "form-input",
+            'placeholder': 'Password'
+        })
+
+
+class CustomSetPasswordForm(SetPasswordForm):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.fields["new_password1"].widget.attrs.update({
+            "class": "form-input",
+            "placeholder": "New Password"
+        })
+
+        self.fields["new_password2"].widget.attrs.update({
+            "class": "form-input",
+            "placeholder": "New Password Confirmation"
+        })
 
 
 class SignupForm(forms.Form):
@@ -26,7 +59,10 @@ class SignupForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.fields["email"].widget.attrs["placeholder"] = "email@exemple.com"
+        self.fields["email"].widget.attrs.update({
+            "class": "form-input",
+            "placeholder": "email@exemple.com"
+        })
 
 
 class OtpTokenForm(forms.Form):
@@ -38,7 +74,12 @@ class OtpTokenForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.fields["otp_token"].widget.attrs["placeholder"] = "OTP Token"
+        self.fields["otp_token"].widget.attrs.update({
+            "class": "form-input_otp",
+            "placeholder": "------",
+            "maxlenght": "6",
+            "autocomplete": "one-time-code"
+        })
 
 
 class CreatePasswordForm(forms.Form):
@@ -76,6 +117,23 @@ class CreatePasswordForm(forms.Form):
 
         return cleaned_data
 
+    class Meta:
+        fields = ["password", "password_confirmation"]
+
+        
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.fields["password"].widget.attrs.update({
+            "class": "form-input",
+            "placeholder": "Password"
+        })
+
+        self.fields["password_confirmation"].widget.attrs.update({
+            "class": "form-input",
+            "placeholder": "Confirm Password"
+        })
+
 
 class ForgetPasswordForm(forms.Form):
     email = forms.EmailField()
@@ -98,4 +156,7 @@ class ForgetPasswordForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.fields["email"].widget.attrs["placeholder"] = "email@exemple.com"
+        self.fields["email"].widget.attrs.update({
+            "class": "form-input",
+            "placeholder": "email@exemple.com"
+        })
