@@ -3,7 +3,7 @@ from django.shortcuts import redirect, render
 from django.views.generic import TemplateView, View
 from django.contrib.auth.views import LoginView
 # Forms
-from authentication.forms import SignupForm, OtpTokenForm, CreatePasswordForm, ForgetPasswordForm
+from authentication.forms import SignupForm, OtpTokenForm, CreatePasswordForm, ForgetPasswordForm, CustomAuthenticationForm
 # Models
 from authentication.models import OtpToken, User
 # Others
@@ -151,8 +151,9 @@ class SignupView(View):
             
             
 
-class LoginView(LoginView):
+class CustomLoginView(LoginView):
     template_name = "login.html"
+    form_class = CustomAuthenticationForm
 
     def get(self, request, *args, **kwargs):
         if self.request.user.is_authenticated:
