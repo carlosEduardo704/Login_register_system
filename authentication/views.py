@@ -95,7 +95,7 @@ class SignupView(View):
                 )
 
                 if not otp_token or not otp_token.is_valid(otp_token=otp_token):
-                    form.add_error("otp_token", "OtpToken invalid or expired")
+                    form.add_error("otp_token", "OTP token invalid or expired!")
                     return render(request, self.template_name, {"form": form, "step": 2})
                 else:
                     otp_token.used = True

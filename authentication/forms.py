@@ -6,6 +6,10 @@ from django.contrib.auth.password_validation import validate_password
 
 
 class CustomAuthenticationForm(AuthenticationForm):
+    
+    error_messages = {
+        "invalid_login": "Incorrect email or password!", 
+    }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
