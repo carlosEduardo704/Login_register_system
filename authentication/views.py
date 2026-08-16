@@ -133,12 +133,16 @@ class SignupView(View):
                 return redirect("signup")
 
             if form.is_valid():
-                    
+                
+                first_name = form.cleaned_data["first_name"]
+                last_name = form.cleaned_data["last_name"]
                 password = form.cleaned_data["password"]
-
+                
+                user.first_name = first_name
+                user.last_name = last_name
                 user.set_password(password)
                 user.is_active = True
-                user.save(update_fields=["password", "is_active"])
+                user.save(update_fields=["first_name", "last_name", "password", "is_active"])
 
                 login(request, user)
 

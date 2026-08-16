@@ -5,7 +5,6 @@ from django.core.validators import validate_email
 from django.contrib.auth.password_validation import validate_password
 
 
-
 class CustomAuthenticationForm(AuthenticationForm):
 
     def __init__(self, *args, **kwargs):
@@ -83,6 +82,9 @@ class OtpTokenForm(forms.Form):
 
 
 class CreatePasswordForm(forms.Form):
+    
+    first_name = forms.CharField(max_length=150)
+    last_name = forms.CharField(max_length=150)
     password = forms.CharField(
         widget=forms.PasswordInput
     )
@@ -118,11 +120,21 @@ class CreatePasswordForm(forms.Form):
         return cleaned_data
 
     class Meta:
-        fields = ["password", "password_confirmation"]
+        fields = ["first_name", "last_name", "password", "password_confirmation"]
 
         
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        
+        self.fields["first_name"].widget.attrs.update({
+            "class": "form-input",
+            "placeholder": "First Name"
+        })
+
+        self.fields["last_name"].widget.attrs.update({
+            "class": "form-input",
+            "placeholder": "Last Name"
+        })
 
         self.fields["password"].widget.attrs.update({
             "class": "form-input",
