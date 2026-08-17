@@ -58,11 +58,11 @@
     {% csrf_token %}
 
     {% if form.otp_token.errors %}
-      <div class="form-error">
-        {% for error in form.otp_token.errors %}
-        <span>{{ error }}</span>
-        {% endfor %}
-      </div>
+    <div class="form-error">
+      {% for error in form.otp_token.errors %}
+      <span>{{ error }}</span>
+      {% endfor %}
+    </div>
     {% endif %}
 
     <input type="hidden" name="step" value="{{ step }}">
@@ -92,11 +92,11 @@
     <input type="hidden" name="step" value="{{ step }}">
 
     {% if form.password.errors %}
-      <div class="form-error">
-        {% for error in form.password.errors %}
-        <span>{{ error }}</span>
-        {% endfor %}
-      </div>
+    <div class="form-error">
+      {% for error in form.password.errors %}
+      <span>{{ error }}</span>
+      {% endfor %}
+    </div>
     {% endif %}
 
     <div class="form-group">
