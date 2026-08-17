@@ -31,11 +31,13 @@ class CustomSetPasswordForm(SetPasswordForm):
 
         self.fields["new_password1"].widget.attrs.update({
             "class": "form-input",
+            "id": "password",
             "placeholder": "New Password"
         })
 
         self.fields["new_password2"].widget.attrs.update({
             "class": "form-input",
+            "id": "password_confirmation",
             "placeholder": "New Password Confirmation"
         })
 
@@ -142,11 +144,13 @@ class CreatePasswordForm(forms.Form):
 
         self.fields["password"].widget.attrs.update({
             "class": "form-input",
+            "id": "password",
             "placeholder": "Password"
         })
 
         self.fields["password_confirmation"].widget.attrs.update({
             "class": "form-input",
+            "id": "password_confirmation",
             "placeholder": "Confirm Password"
         })
 
