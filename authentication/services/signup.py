@@ -10,9 +10,10 @@ def start_signup(email):
             "email_verified": False
         }
     )
-
-    user.set_unusable_password()
-    user.save()
+    
+    if created:
+        user.set_unusable_password()
+        user.save(update_fields=["password"])
 
     OtpToken.objects.filter(
         user=user, 
