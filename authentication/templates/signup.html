@@ -41,6 +41,14 @@
     {% csrf_token %}
     <input type="hidden" name="step" value="{{ step }}">
 
+    {% if form.non_field_errors %}
+      <div class="form-error">
+        {% for error in form.non_field_errors %}
+        <span>{{ error }}</span>
+        {% endfor %}
+      </div>
+    {% endif %}
+
     <div class="form-group">
       {{ form.email }}
     </div>
