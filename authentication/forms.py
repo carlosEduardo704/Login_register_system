@@ -8,6 +8,7 @@ from authentication.models import User, OtpToken
 def error_messages():
     return {
         "invalid_login": "Incorrect email or password!",
+        "invalid_email": "Invalid email address.",
         "rate_limit": "Too many attempts. Try again later."
     }
 
@@ -15,12 +16,23 @@ class CustomAuthenticationForm(AuthenticationForm):
     
     error_messages = error_messages()
 
+    username = forms.EmailField(widget=forms.EmailInput())
+
     def clean(self):
         if self.rate_limited:
             raise forms.ValidationError(
                 self.error_messages["rate_limit"]
             )
         
+        email = self.cleaned_data["username"]
+
+        try:
+            validate_email(email)
+        except ValidationError:
+            raise forms.ValidationError(
+                self.error_messages["invalid_email"]
+            )
+
         return super().clean()
 
     def __init__(self, *args, rate_limited=False, **kwargs):
@@ -29,7 +41,8 @@ class CustomAuthenticationForm(AuthenticationForm):
         
         self.fields['username'].widget.attrs.update({
             "class": "form-input",
-            'placeholder': 'Username'
+            'placeholder': "Email",
+            "autocomplete": "email",
         })
         self.fields['password'].widget.attrs.update({
             "class": "form-input",

@@ -72,7 +72,7 @@ class SignupView(View):
                     
 
 @method_decorator(
-    ratelimit(key="ip", rate="1/10m", method="POST", block=False),
+    ratelimit(key="ip", rate="5/10m", method="POST", block=False),
     name="dispatch"
 )
 class CustomLoginView(LoginView):
