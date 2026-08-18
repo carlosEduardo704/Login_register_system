@@ -58,7 +58,18 @@ class OtpToken(models.Model):
         return code
 
     def otp_expired(self):
-        return timezone.now() > self.otp_expires_at 
+        return timezone.now() > self.otp_expires_at
+    
+    def otp_token_creation_limit_reached(user_id):
+
+        start = timezone.now() - timezone.timedelta(minutes=10)
+        end = timezone.now()
+
+        user_otp_create_last_10_minutes = OtpToken.objects.filter(user=user_id,
+            created_at__gte=start,
+            created_at__lt=end).count()
+
+        return user_otp_create_last_10_minutes >= 3
 
     def is_valid(self, otp_token):
         return (

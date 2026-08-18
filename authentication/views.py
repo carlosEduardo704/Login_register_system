@@ -7,6 +7,9 @@ from django.contrib.auth.views import LoginView
 from authentication.forms import SignupForm, OtpTokenForm, CreatePasswordForm, ForgetPasswordForm, CustomAuthenticationForm
 # Models
 from authentication.models import User
+# Ratelimit
+from django_ratelimit.decorators import ratelimit
+from django.utils.decorators import method_decorator
 # Others
 from .services.signup import handle_step_one, handle_step_two, handle_step_three
 from .services.reset_password_link import create_reset_password_link, handle_reset_password_link
@@ -20,7 +23,10 @@ class HomePageView(TemplateView):
 
         return super().dispatch(request)
 
-
+@method_decorator(
+    ratelimit(key="ip", rate="3/10m", method="POST", block=False),
+    name="dispatch"
+)
 class SignupView(View):
     template_name = 'signup.html'
     
@@ -36,9 +42,10 @@ class SignupView(View):
     
     def post(self, request, *args, **kwargs):
         step = int(request.POST.get('step', 1))
+        limited = getattr(request, "limited", False)
 
         if step == 1:
-            form = SignupForm(request.POST) # Email Form
+            form = SignupForm(request.POST, rate_limited=limited) # Email Form
             return handle_step_one(self, request, form)
             
         elif step == 2:
@@ -64,6 +71,10 @@ class SignupView(View):
             return handle_step_three(self, user, request, form)
                     
 
+@method_decorator(
+    ratelimit(key="ip", rate="1/10m", method="POST", block=False),
+    name="dispatch"
+)
 class CustomLoginView(LoginView):
     template_name = "login.html"
     form_class = CustomAuthenticationForm
@@ -74,10 +85,21 @@ class CustomLoginView(LoginView):
             
         return super().get(request)
     
+    def post(self, request, *args, **kwargs):
+        limited = getattr(request, "limited", False)
+
+        form = CustomAuthenticationForm(request, data=request.POST, rate_limited=limited)
+
+        return render(request, self.template_name, {"form": form})
+
     def get_success_url(self):
         return reverse_lazy("home_page")
 
 
+@method_decorator(
+    ratelimit(key="ip", rate="3/10m", method="POST", block=False),
+    name="dispatch"
+)
 class ForgetPasswordView(TemplateView):
     template_name = "forget_password.html"
     
@@ -87,7 +109,8 @@ class ForgetPasswordView(TemplateView):
 
     def post(self, request, *args, **kwargs):
         step = int(request.POST.get('step', 1))
+        limited = getattr(request, "limited", False)
         
         if step == 1:
-            form = ForgetPasswordForm(request.POST)
+            form = ForgetPasswordForm(request.POST, rate_limited=limited)
             return handle_reset_password_link(self, request, form)
