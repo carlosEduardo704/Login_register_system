@@ -6,7 +6,14 @@ from django.contrib.auth.views import LoginView, LogoutView, PasswordResetConfir
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth import logout
 # Forms
-from authentication.forms import SignupForm, OtpTokenForm, CreatePasswordForm, ForgetPasswordForm, CustomAuthenticationForm
+from authentication.forms import (
+    SignupForm, OtpTokenForm,
+    CreatePasswordForm, 
+    ForgetPasswordForm, 
+    CustomAuthenticationForm,
+    CustomPasswordChangeForm,
+    CustomSetPasswordForm
+)
 # Models
 from authentication.models import User
 # Ratelimit
@@ -101,13 +108,11 @@ class CustomLoginView(LoginView):
             return redirect("home_page")
             
         return super().get(request)
-    
-    def post(self, request, *args, **kwargs):
-        limited = getattr(request, "limited", False)
 
-        form = CustomAuthenticationForm(request, data=request.POST, rate_limited=limited)
-
-        return render(request, self.template_name, {"form": form})
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["rate_limited"] = getattr(self.request, "limited", False)
+        return kwargs
 
     def get_success_url(self):
         return reverse_lazy("home_page")
@@ -137,3 +142,10 @@ class ForgetPasswordView(TemplateView):
         if step == 1:
             form = ForgetPasswordForm(request.POST, rate_limited=limited)
             return handle_reset_password_link(self, request, form)
+
+
+class PasswordResetConfirmView(PasswordResetConfirmView):
+    success_url=reverse_lazy("login"),
+    template_name="password_reset_confirmation.html",
+    form_class=CustomSetPasswordForm
+    
