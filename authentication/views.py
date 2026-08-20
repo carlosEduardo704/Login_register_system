@@ -3,6 +3,7 @@ from django.urls.base import reverse_lazy
 # Views
 from django.views.generic import TemplateView, View
 from django.contrib.auth.views import LoginView, LogoutView, PasswordResetConfirmView
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth import logout
 # Forms
 from authentication.forms import SignupForm, OtpTokenForm, CreatePasswordForm, ForgetPasswordForm, CustomAuthenticationForm
@@ -15,7 +16,7 @@ from django.utils.decorators import method_decorator
 from .services.signup import handle_step_one, handle_step_two, handle_step_three
 from .services.reset_password_link import create_reset_password_link, handle_reset_password_link
 
-class HomePageView(TemplateView):
+class HomePageView(LoginRequiredMixin, TemplateView):
     template_name = 'home_page.html'
 
     def dispatch(self, request):
@@ -23,6 +24,20 @@ class HomePageView(TemplateView):
             return redirect('signup')
 
         return super().dispatch(request)
+    
+    def get(self, request, *args, **kwargs):
+        form = CustomPasswordChangeForm()
+        
+        return render(request, self.template_name, {"form": form})
+    
+    def post(self, request, *args, **kwargs):
+
+        form = CustomPasswordChangeForm(request.POST)
+
+        if form.is_valid():
+            return redirect("home_page")
+        
+        return render(request, self.template_name, {"form": form})
 
 
 @method_decorator(
