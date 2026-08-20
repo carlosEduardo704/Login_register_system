@@ -2,7 +2,8 @@ from django.shortcuts import redirect, render
 from django.urls.base import reverse_lazy
 # Views
 from django.views.generic import TemplateView, View
-from django.contrib.auth.views import LoginView
+from django.contrib.auth.views import LoginView, LogoutView, PasswordResetConfirmView
+from django.contrib.auth import logout
 # Forms
 from authentication.forms import SignupForm, OtpTokenForm, CreatePasswordForm, ForgetPasswordForm, CustomAuthenticationForm
 # Models
@@ -22,6 +23,7 @@ class HomePageView(TemplateView):
             return redirect('signup')
 
         return super().dispatch(request)
+
 
 @method_decorator(
     ratelimit(key="ip", rate="3/10m", method="POST", block=False),
@@ -94,6 +96,12 @@ class CustomLoginView(LoginView):
 
     def get_success_url(self):
         return reverse_lazy("home_page")
+
+
+class CustomLogoutView(LogoutView):
+    def dispatch(self, request):
+        logout(request)
+        return redirect('login')
 
 
 @method_decorator(
