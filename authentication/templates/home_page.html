@@ -130,7 +130,7 @@
 
   <!-- TAB 2: Change Password -->
   <div id="tab-password" class="tab-pane">
-    <form method="POST">
+    <form method="POST" action="?tab=tab-password">
       {% csrf_token %}
   
       {% if form.non_field_errors %}
@@ -187,5 +187,25 @@
     document.getElementById(tabId).classList.add('active');
     evt.currentTarget.classList.add('active');
   }
+
+  document.addEventListener("DOMContentLoaded", function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const activeTab = urlParams.get('tab');
+    
+    if (activeTab) {
+      const tabButton = document.querySelector(`[onclick*="'${activeTab}'"]`);
+      const tabPane = document.getElementById(activeTab);
+      
+      if (tabButton && tabPane) {
+        // Remove active from all elements
+        document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        
+        // Add active in the right elements
+        tabPane.classList.add('active');
+        tabButton.classList.add('active');
+      }
+    }
+  });
 </script>
 {% endblock content %}
