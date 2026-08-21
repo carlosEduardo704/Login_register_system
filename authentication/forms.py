@@ -5,23 +5,19 @@ from django.core.validators import validate_email
 from django.contrib.auth.password_validation import validate_password
 from authentication.models import User, OtpToken
 
-def error_messages():
-    return {
-        "invalid_login": "Incorrect email or password!",
+alternatives_error_messages = {
         "invalid_email": "Invalid email address.",
         "rate_limit": "Too many attempts. Try again later."
     }
 
 class CustomAuthenticationForm(AuthenticationForm):
-    
-    error_messages = error_messages()
 
     username = forms.EmailField(widget=forms.EmailInput())
 
     def clean(self):
         if self.rate_limited:
             raise forms.ValidationError(
-                self.error_messages["rate_limit"]
+                alternatives_error_messages["rate_limit"]
             )
         
         email = self.cleaned_data["username"]
@@ -30,7 +26,7 @@ class CustomAuthenticationForm(AuthenticationForm):
             validate_email(email)
         except ValidationError:
             raise forms.ValidationError(
-                self.error_messages["invalid_email"]
+                alternatives_error_messages["invalid_email"]
             )
 
         return super().clean()
@@ -68,8 +64,19 @@ class CustomSetPasswordForm(SetPasswordForm):
         })
 
 class CustomPasswordChangeForm(PasswordChangeForm):
-    def __init__(self, user, *args, **kwargs):
+
+    def clean(self):
+        if self.rate_limited:
+            raise forms.ValidationError(
+                alternatives_error_messages["rate_limit"]
+            )
+        
+        
+        return super().clean()
+
+    def __init__(self, user, rate_limited=False, *args, **kwargs):
         super().__init__(user, *args, **kwargs)
+        self.rate_limited = rate_limited
 
         self.fields["old_password"].widget.attrs.update({
             "class": "form-input",
@@ -90,8 +97,6 @@ class CustomPasswordChangeForm(PasswordChangeForm):
         })
 class SignupForm(forms.Form):
 
-    error_messages = error_messages()
-
     email = forms.EmailField()
 
     def clean(self):
@@ -99,7 +104,7 @@ class SignupForm(forms.Form):
 
         if self.rate_limited:
             raise forms.ValidationError(
-                self.error_messages["rate_limit"]
+                alternatives_error_messages["rate_limit"]
             )
 
         email = cleaned_data.get("email")
@@ -113,7 +118,7 @@ class SignupForm(forms.Form):
         user, created = User.objects.get_or_create(email=email)
         if OtpToken.otp_token_creation_limit_reached(user):
             raise forms.ValidationError(
-                self.error_messages["rate_limit"]
+                alternatives_error_messages["rate_limit"]
             )
  
         return cleaned_data
@@ -218,7 +223,6 @@ class CreatePasswordForm(forms.Form):
 
 
 class ForgetPasswordForm(forms.Form):
-    error_messages = error_messages()
     
     email = forms.EmailField()
 
@@ -226,7 +230,7 @@ class ForgetPasswordForm(forms.Form):
 
         if self.rate_limited:
             raise forms.ValidationError(
-                self.error_messages["rate_limit"]
+                alternatives_error_messages["rate_limit"]
             )
         
         cleaned_data = super().clean()

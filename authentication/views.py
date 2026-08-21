@@ -23,6 +23,10 @@ from django.utils.decorators import method_decorator
 from .services.signup import handle_step_one, handle_step_two, handle_step_three
 from .services.reset_password_link import create_reset_password_link, handle_reset_password_link
 
+@method_decorator(
+    ratelimit(key="ip", rate="2/10m", method="POST", block=False),
+    name="dispatch"
+)
 class HomePageView(LoginRequiredMixin, TemplateView):
     template_name = 'home_page.html'
     form_class = CustomPasswordChangeForm
@@ -40,7 +44,9 @@ class HomePageView(LoginRequiredMixin, TemplateView):
     
     def post(self, request, *args, **kwargs):
 
-        form = CustomPasswordChangeForm(request.user, request.POST)
+        limited = getattr(request, "limited", False)
+
+        form = CustomPasswordChangeForm(request.user, limited, request.POST)
 
         return render(request, self.template_name, {"form": form})
 
@@ -140,9 +146,3 @@ class ForgetPasswordView(TemplateView):
         if step == 1:
             form = ForgetPasswordForm(request.POST, rate_limited=limited)
             return handle_reset_password_link(self, request, form)
-
-
-class PasswordResetConfirmView(PasswordResetConfirmView):
-    success_url = reverse_lazy("login"),
-    template_name = "password_reset_confirmation.html",
-    form_class = CustomSetPasswordForm
