@@ -1,5 +1,5 @@
 from django import forms
-from django.contrib.auth.forms import AuthenticationForm, SetPasswordForm
+from django.contrib.auth.forms import AuthenticationForm, SetPasswordForm, PasswordChangeForm
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.contrib.auth.password_validation import validate_password
@@ -67,7 +67,27 @@ class CustomSetPasswordForm(SetPasswordForm):
             "placeholder": "New Password Confirmation"
         })
 
+class CustomPasswordChangeForm(PasswordChangeForm):
+    def __init__(self, user, *args, **kwargs):
+        super().__init__(user, *args, **kwargs)
 
+        self.fields["old_password"].widget.attrs.update({
+            "class": "form-input",
+            "id": "old_password",
+            "placeholder": "Old Password"
+        })
+
+        self.fields["new_password1"].widget.attrs.update({
+            "class": "form-input",
+            "id": "password",
+            "placeholder": "New Password"
+        })
+
+        self.fields["new_password2"].widget.attrs.update({
+            "class": "form-input",
+            "id": "password_confirmation",
+            "placeholder": "New Password Confirmation"
+        })
 class SignupForm(forms.Form):
 
     error_messages = error_messages()

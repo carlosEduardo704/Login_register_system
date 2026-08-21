@@ -25,6 +25,7 @@ from .services.reset_password_link import create_reset_password_link, handle_res
 
 class HomePageView(LoginRequiredMixin, TemplateView):
     template_name = 'home_page.html'
+    form_class = CustomPasswordChangeForm
 
     def dispatch(self, request):
         if not request.user.is_authenticated:
@@ -33,17 +34,14 @@ class HomePageView(LoginRequiredMixin, TemplateView):
         return super().dispatch(request)
     
     def get(self, request, *args, **kwargs):
-        form = CustomPasswordChangeForm()
+        form = CustomPasswordChangeForm(request.user)
         
         return render(request, self.template_name, {"form": form})
     
     def post(self, request, *args, **kwargs):
 
-        form = CustomPasswordChangeForm(request.POST)
+        form = CustomPasswordChangeForm(request.user, request.POST)
 
-        if form.is_valid():
-            return redirect("home_page")
-        
         return render(request, self.template_name, {"form": form})
 
 
@@ -145,7 +143,6 @@ class ForgetPasswordView(TemplateView):
 
 
 class PasswordResetConfirmView(PasswordResetConfirmView):
-    success_url=reverse_lazy("login"),
-    template_name="password_reset_confirmation.html",
-    form_class=CustomSetPasswordForm
-    
+    success_url = reverse_lazy("login"),
+    template_name = "password_reset_confirmation.html",
+    form_class = CustomSetPasswordForm

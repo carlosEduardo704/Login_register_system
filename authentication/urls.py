@@ -7,7 +7,7 @@ from authentication.views import (
     CustomLogoutView,
     PasswordResetConfirmView
 )
-from django.contrib.auth.views import LogoutView, PasswordResetConfirmView
+from django.contrib.auth.views import LogoutView
 from authentication.forms import CustomSetPasswordForm
 
 urlpatterns = [

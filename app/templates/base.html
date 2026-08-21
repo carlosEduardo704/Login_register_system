@@ -12,72 +12,72 @@
   {% block style %}{% endblock style %}
 </head>
 <body>
-    {% block content %}{% endblock %}
-    {% block js_script %}
-      <script>
-        const passwordInput = document.getElementById('password');
-        const confirmPasswordInput = document.getElementById('password_confirmation');
-        const submitBtn = document.getElementById('submitBtn');
-        const matchMsg = document.getElementById('theSame');
-  
-        const ruleLength = document.getElementById('length');
-        const ruleUppercase = document.getElementById('uppercase');
-        const ruleNumber = document.getElementById('number');
-        const ruleSpecial = document.getElementById('special');
-  
-        function validateForm() {
-          const val = passwordInput.value;
-          const confirmVal = confirmPasswordInput.value;
-  
-          // Rules check
-          const isLengthValid = val.length >= 8;
-          const isUppercaseValid = /[A-Z]/.test(val);
-          const isNumberValid = /[0-9]/.test(val);
-          const isSpecialValid = /[^A-Za-z0-9]/.test(val);
-  
-          updateRuleUI(ruleLength, isLengthValid);
-          updateRuleUI(ruleUppercase, isUppercaseValid);
-          updateRuleUI(ruleNumber, isNumberValid);
-          updateRuleUI(ruleSpecial, isSpecialValid);
-  
-          const isComplexityValid = isLengthValid && isUppercaseValid && isNumberValid && isSpecialValid;
-  
-          // Password match check
-          let doPasswordsMatch = false;
-          if (confirmVal.length > 0) {
-            if (val === confirmVal) {
-              matchMsg.style.color = "#28a745";
-              doPasswordsMatch = true;
-            } else {
-              matchMsg.style.color = "#dc3545";
-              doPasswordsMatch = false;
-            }
-          }
-  
-          // Enable or disable submit button
-          if (isComplexityValid && doPasswordsMatch) {
-            submitBtn.removeAttribute('disabled');
-          } else {
-            submitBtn.setAttribute('disabled', 'true');
-          }
+  {% block content %}{% endblock %}
+  {% block js_script %}
+  <script>
+    const passwordInput = document.getElementById('password');
+    const confirmPasswordInput = document.getElementById('password_confirmation');
+    const submitBtn = document.getElementById('submitBtn');
+    const matchMsg = document.getElementById('theSame');
+
+    const ruleLength = document.getElementById('length');
+    const ruleUppercase = document.getElementById('uppercase');
+    const ruleNumber = document.getElementById('number');
+    const ruleSpecial = document.getElementById('special');
+
+    function validateForm() {
+      const val = passwordInput.value;
+      const confirmVal = confirmPasswordInput.value;
+
+      // Rules check
+      const isLengthValid = val.length >= 8;
+      const isUppercaseValid = /[A-Z]/.test(val);
+      const isNumberValid = /[0-9]/.test(val);
+      const isSpecialValid = /[^A-Za-z0-9]/.test(val);
+
+      updateRuleUI(ruleLength, isLengthValid);
+      updateRuleUI(ruleUppercase, isUppercaseValid);
+      updateRuleUI(ruleNumber, isNumberValid);
+      updateRuleUI(ruleSpecial, isSpecialValid);
+
+      const isComplexityValid = isLengthValid && isUppercaseValid && isNumberValid && isSpecialValid;
+
+      // Password match check
+      let doPasswordsMatch = false;
+      if (confirmVal.length > 0) {
+        if (val === confirmVal) {
+          matchMsg.style.color = "#28a745";
+          doPasswordsMatch = true;
+        } else {
+          matchMsg.style.color = "#dc3545";
+          doPasswordsMatch = false;
         }
-  
-        function updateRuleUI(element, isValid) {
-          const icon = element.querySelector('i');
-          if (isValid) {
-            element.classList.add('valid');
-            element.classList.remove('invalid');
-            icon.className = 'fa-solid fa-circle-check';
-          } else {
-            element.classList.remove('valid');
-            element.classList.add('invalid');
-            icon.className = 'fa-solid fa-circle-xmark';
-          }
-        }
-  
-        passwordInput.addEventListener('input', validateForm);
-        confirmPasswordInput.addEventListener('input', validateForm);
-      </script>
-    {% endblock js_script %}
+      }
+
+      // Enable or disable submit button
+      if (isComplexityValid && doPasswordsMatch) {
+        submitBtn.removeAttribute('disabled');
+      } else {
+        submitBtn.setAttribute('disabled', 'true');
+      }
+    }
+
+    function updateRuleUI(element, isValid) {
+      const icon = element.querySelector('i');
+      if (isValid) {
+        element.classList.add('valid');
+        element.classList.remove('invalid');
+        icon.className = 'fa-solid fa-circle-check';
+      } else {
+        element.classList.remove('valid');
+        element.classList.add('invalid');
+        icon.className = 'fa-solid fa-circle-xmark';
+      }
+    }
+
+    passwordInput.addEventListener('input', validateForm);
+    confirmPasswordInput.addEventListener('input', validateForm);
+  </script>
+  {% endblock js_script %}
 </body>
 </html>
