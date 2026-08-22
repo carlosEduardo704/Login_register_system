@@ -140,3 +140,14 @@ EMAIL_USE_TLS = int(os.getenv("EMAIL_USE_TLS"))
 EMAIL_USE_SSL = int(os.getenv("EMAIL_USE_SSL"))
 
 SILENCED_SYSTEM_CHECKS = [os.getenv("SILENCED_SYSTEM_CHECK")]
+
+# CACHE config
+CACHES = {
+    "default": {
+        "BACKEND": os.getenv("BACKEND"),
+        "LOCATION": os.getenv("LOCATION"),
+        "OPTIONS": {
+            "CLIENT_CLASS": os.getenv("CLIENT_CLASS"),
+        },
+    },
+}
