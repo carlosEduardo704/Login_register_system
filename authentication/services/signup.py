@@ -63,6 +63,7 @@ def handle_step_one(self, request, form):
 
         request.session["pending_auth_user"] = user.pk
         request.session["signup_step"] = 2
+        request.session.set_expiry(300) # 5 minutes
 
         form_two = OtpTokenForm()
         return render(request, self.template_name, {"form": form_two, "step": 2})

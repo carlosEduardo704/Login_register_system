@@ -61,10 +61,18 @@
 
     <button type="submit" class="btn-submit">Verify Code</button>
 
-    <div class="footer-links">
-      Didn't receive the code? <a href="#">Resend Code</a>
-    </div>
+    
   </form>
+  <div class="footer-links">
+     <form method="POST">
+      {% csrf_token %}
+      <input type="hidden" name="action" value="restart_signup">
+      <button>
+        Voltar
+      </button>
+    </form>
+  </div>
+  
 </div>
 
 {% elif step == 3 %}

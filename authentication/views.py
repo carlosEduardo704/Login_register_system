@@ -65,10 +65,27 @@ class SignupView(View):
         return super().dispatch(request)
 
     def get(self, request, *args, **kwargs):
-        form = SignupForm() # Email Form
-        return render(request, self.template_name, {'form': form, 'step': 1})
+
+        step = request.session.get("signup_step", 1)
+
+        if step == 1:
+            form = SignupForm()
+        elif step == 2:
+            form = OtpTokenForm()
+        elif step == 3:
+            form = CreatePasswordForm()
+            
+        return render(request, self.template_name, {'form': form, 'step': step})
     
     def post(self, request, *args, **kwargs):
+        action = request.POST.get("action")
+
+        if action == "restart_signup":
+            request.session.pop("signup_step", None)
+            request.session.pop("pending_auth_user", None)
+
+            return redirect("signup")
+
         step = int(request.POST.get('step', 1))
         limited = getattr(request, "limited", False)
 
