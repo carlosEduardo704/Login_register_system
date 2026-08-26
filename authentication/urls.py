@@ -4,7 +4,8 @@ from authentication.views import (
     SignupView,
     CustomLoginView,
     ForgetPasswordView,
-    CustomLogoutView
+    CustomLogoutView,
+    ResendOtpTokenView
 )
 from django.contrib.auth.views import LogoutView, PasswordResetConfirmView
 from authentication.forms import CustomSetPasswordForm
@@ -23,5 +24,6 @@ urlpatterns = [
         form_class = CustomSetPasswordForm
         ),
         name="reset_password"
-    )
+    ),
+    path("signup/resend_otp/", ResendOtpTokenView.as_view(), name="resend_otp")
 ]

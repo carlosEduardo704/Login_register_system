@@ -142,6 +142,7 @@ EMAIL_USE_SSL = int(os.getenv("EMAIL_USE_SSL"))
 # CACHE config
 SILENCED_SYSTEM_CHECKS = [os.getenv("SILENCED_SYSTEM_CHECK")]
 
+# CACHE config
 CACHES = {
     "default": {
         "BACKEND": os.getenv("BACKEND"),
@@ -151,3 +152,8 @@ CACHES = {
         },
     },
 }
+
+# CELERY config
+CELERY_BROKER_URL = "redis://localhost:6379/0"
+CELERY_ACCEPT_CONTENT = ["json"]
+CELERY_TASK_SERIALIZER = "json"

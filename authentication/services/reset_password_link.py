@@ -31,7 +31,7 @@ def handle_reset_password_link(self, request, form):
         if user:
             reset_url = create_reset_password_link(request, user)
             
-            send_reset_password_link(user.email, reset_url)
+            send_reset_password_link.delay(user.email, reset_url)
 
         
         return render(request, self.template_name, {"step": 2})

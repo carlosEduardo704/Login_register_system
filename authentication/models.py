@@ -37,7 +37,6 @@ class OtpToken(models.Model):
 
     class OtpPurpose(models.TextChoices):
         AUTHENTICATION = "AUTHENTICATION", "Authentication"
-        PASSWORD_RESET = "PASSWORD_RESET", "Reset password"
         CHANGE_EMAIL = "CHANGE_EMAIL", "Change Email"
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -69,7 +68,29 @@ class OtpToken(models.Model):
             created_at__gte=start,
             created_at__lt=end).count()
 
-        return user_otp_create_last_10_minutes >= 3
+        return user_otp_create_last_10_minutes > 3
+    
+    def otp_token_creation_last_minute_reached(user_id):
+
+        start = timezone.now() - timezone.timedelta(minutes=1)
+        end = timezone.now()
+
+        user_otp_create_last_minute = OtpToken.objects.filter(user=user_id,
+            created_at__gte=start,
+            created_at__lt=end).count()
+
+        return user_otp_create_last_minute > 1
+
+
+    @classmethod
+    def resend_otp_token(cls, user, purpose):
+        if cls.otp_token_creation_limit_reached(user.pk) or cls.otp_token_creation_last_minute_reached(user.pk):
+            return False
+        
+        code = cls.objects.create(user=user, purpose=purpose)
+        return code
+    
+
 
     def is_valid(self, otp_token):
         return (
