@@ -126,3 +126,21 @@ def handle_step_three(self, user, request, form):
         return redirect("home_page")
 
     return render(request, self.template_name, {"form": form, "step": 3})
+
+
+def handle_resend_otp(request):
+    user_id = request.session.get("pending_auth_user")
+    
+    if not user_id:
+        return redirect("signup")
+
+    user = User.objects.get(id=user_id)
+
+    otp = OtpToken.resend_otp_token(user=user, purpose=OtpToken.OtpPurpose.AUTHENTICATION)
+
+    if otp:
+        send_email_otp.delay(user.email, otp.otp_token)
+        request.session["message"] = "success"
+    else:
+        request.session["message"] = "error"
+

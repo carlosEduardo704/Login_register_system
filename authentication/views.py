@@ -15,13 +15,14 @@ from authentication.forms import (
     CustomSetPasswordForm
 )
 # Models
-from authentication.models import User
+from authentication.models import User, OtpToken
 # Ratelimit
 from django_ratelimit.decorators import ratelimit
 from django.utils.decorators import method_decorator
 # Others
-from .services.signup import handle_step_one, handle_step_two, handle_step_three
+from .services.signup import handle_step_one, handle_step_two, handle_step_three, handle_resend_otp
 from .services.reset_password_link import create_reset_password_link, handle_reset_password_link
+from authentication.services.emails.send_email_service import send_email_otp
 
 @method_decorator(
     ratelimit(key="ip", rate="2/10m", method="POST", block=False),
@@ -72,6 +73,10 @@ class SignupView(View):
             form = SignupForm()
         elif step == 2:
             form = OtpTokenForm()
+            message = request.session.get("message")
+
+            return render(request, self.template_name, {'form': form, 'step': step, "message": message})
+
         elif step == 3:
             form = CreatePasswordForm()
             
@@ -163,3 +168,21 @@ class ForgetPasswordView(TemplateView):
         if step == 1:
             form = ForgetPasswordForm(request.POST, rate_limited=limited)
             return handle_reset_password_link(self, request, form)
+
+
+@method_decorator(
+    ratelimit(key="ip", rate="1/1m", method="POST", block=False),
+    name="dispatch"
+)
+class ResendOtpTokenView(View):
+    
+    def post(self, request, *args, **kwargs):
+
+        if getattr(request, "limited", False):
+            request.session["message"] = "error"
+
+            return redirect("signup")
+
+        handle_resend_otp(request=request)
+
+        return redirect("signup")

@@ -1,5 +1,47 @@
 {% extends "base.html" %}
 {% block title %}Sign Up{% endblock %}
+{% block style %}
+<style>
+  .form-actions-buttons {
+        display: flex;
+        justify-content: space-between;
+        gap: 15px;
+        margin-top: 5px;
+    }
+
+    .form-actions-buttons form {
+        flex: 1;
+    }
+
+    .form-actions-buttons .btn-submit {
+        margin-bottom: 0;
+        height: 42px;
+        font-size: 14px;
+    }
+
+    .btn-secondary {
+        background-color: #f1f3f5;
+        color: #495057;
+        border: 1px solid #dee2e6;
+    }
+
+    .btn-secondary:hover:not(:disabled) {
+        background-color: #e9ecef;
+        color: #212529;
+    }
+
+    .message-error{
+      margin: 10px;
+      color: red;
+    }
+
+    .message-success {
+      margin: 10px;
+      color: green;
+    }
+</style>
+  
+{% endblock style %}
 {% block content %}
 
 {% if step == 1 %}
@@ -61,14 +103,39 @@
 
     <button type="submit" class="btn-submit">Verify Code</button>
 
-    
   </form>
-  <div class="footer-links">
-     <form method="POST">
+
+  {% if message %}
+
+    {% if message == "error" %}
+      <div class="message-error">
+        <span>Too many attempts. Try agin latter.</span>
+      </div>
+    {% elif message == "success" %}
+      <div class="message-success">
+        <span>A new otp token has been sent to your email.</span>
+      </div>
+    {% endif %}
+
+  {% endif %}
+  
+  <div class="form-actions-buttons">
+    
+    <!-- Back form -->
+    <form method="POST">
       {% csrf_token %}
       <input type="hidden" name="action" value="restart_signup">
-      <button>
-        Voltar
+      <button type="submit" class="btn-submit btn-secondary">
+        <i class="fa-solid fa-arrow-left" style="margin-right: 6px;"></i> Back
+      </button>
+    </form>
+
+    <!--Resend Form -->
+    <form method="POST" action="{% url 'resend_otp' %}">
+      {% csrf_token %}
+      <input type="hidden" name="action" value="resend">
+      <button type="submit" class="btn-submit">
+        <i class="fa-solid fa-rotate-right" style="margin-right: 6px;"></i> Resend Code
       </button>
     </form>
   </div>
