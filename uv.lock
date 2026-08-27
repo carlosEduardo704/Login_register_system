@@ -216,6 +216,7 @@ dependencies = [
     { name = "django-redis" },
     { name = "dotenv" },
     { name = "psycopg", extra = ["binary"] },
+    { name = "uwsgi" },
 ]
 
 [package.metadata]
@@ -227,6 +228,7 @@ requires-dist = [
     { name = "django-redis", specifier = ">=7.0.0" },
     { name = "dotenv", specifier = ">=0.9.9" },
     { name = "psycopg", extras = ["binary"], specifier = ">=3.3.4" },
+    { name = "uwsgi", specifier = ">=2.0.31" },
 ]
 
 [[package]]
@@ -364,6 +366,12 @@ sdist = { url = "https://files.pythonhosted.org/packages/81/5b/879b2f932adfa7a05
 wheels = [
     { url = "https://files.pythonhosted.org/packages/9e/a4/017a7a6cbe387d961a688ec31364ae60a5c4e22c96ae9921b79a947c855d/tzlocal-5.4.4-py3-none-any.whl", hash = "sha256:aae09f0126a8a86fa736be266eb4a471380d26a0de3bc14844e7821fee3e2a15", size = 18115, upload-time = "2026-06-29T08:03:38.666Z" },
 ]
+
+[[package]]
+name = "uwsgi"
+version = "2.0.31"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/9f/49/2f57640e889ba509fd1fae10cccec1b58972a07c2724486efba94c5ea448/uwsgi-2.0.31.tar.gz", hash = "sha256:e8f8b350ccc106ff93a65247b9136f529c14bf96b936ac5b264c6ff9d0c76257", size = 822796, upload-time = "2025-10-11T19:17:28.794Z" }
 
 [[package]]
 name = "vine"
