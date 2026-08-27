@@ -10,15 +10,15 @@ server {
     client_max_body_size    75M;
     
     location /media {
-        alias /var/www/Login_register/media;
+        alias /var/www/Login_register_system/media;
     }
     
     location /static {
-        alias /var/www/Login_register/static;
+        alias /var/www/Login_register_system/static;
     }
     
     location / {
         uwsgi_pass   django;
-        include      /var/www/Login_register/uwsgi_params;
+        include      /var/www/Login_register_system/uwsgi_params;
     }
 }
