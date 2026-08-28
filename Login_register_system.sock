@@ -1,4 +1,4 @@
-upstreen django {
+upstream django {
     server unix://var/www/Login_register_system/Login_register_system.sock;
 }
 
