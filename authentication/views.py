@@ -23,6 +23,7 @@ from django.utils.decorators import method_decorator
 from .services.signup import handle_step_one, handle_step_two, handle_step_three, handle_resend_otp
 from .services.reset_password_link import create_reset_password_link, handle_reset_password_link
 from authentication.services.emails.send_email_service import send_email_otp
+from django.http import Http404
 
 @method_decorator(
     ratelimit(key="ip", rate="2/10m", method="POST", block=False),
@@ -175,6 +176,9 @@ class ForgetPasswordView(TemplateView):
     name="dispatch"
 )
 class ResendOtpTokenView(View):
+    
+    def get(self, request):
+        raise Http404()
     
     def post(self, request, *args, **kwargs):
 
