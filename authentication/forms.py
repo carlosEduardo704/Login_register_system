@@ -115,11 +115,15 @@ class SignupForm(forms.Form):
             raise forms.ValidationError("Invalid email format!")
         
         # Otp_token creation limit
-        user, created = User.objects.get_or_create(email=email)
-        if OtpToken.otp_token_creation_limit_reached(user):
-            raise forms.ValidationError(
-                alternatives_error_messages["rate_limit"]
-            )
+        try:
+            user = User.objects.get(email=email)
+            if OtpToken.otp_token_creation_limit_reached(user.pk):
+                raise forms.ValidationError(
+                    alternatives_error_messages["rate_limit"]
+                )
+        except User.DoesNotExist:
+            pass
+        
  
         return cleaned_data
     
