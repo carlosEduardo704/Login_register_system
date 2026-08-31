@@ -144,3 +144,21 @@ def handle_resend_otp(request):
     else:
         request.session["message"] = "error"
 
+
+def handle_restart_signup(request):
+    otp = (
+        OtpToken.objects
+        .filter(
+            user=request.session.get("pending_auth_user")
+        )
+        .order_by("-created_at")
+        .first()
+    )
+    otp.used = True
+    otp.save(update_fields=["used"])
+    
+    request.session.pop("signup_step", None)
+    request.session.pop("pending_auth_user", None)
+
+    return redirect("signup")
+

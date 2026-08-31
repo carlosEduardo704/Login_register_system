@@ -20,7 +20,7 @@ from authentication.models import User, OtpToken
 from django_ratelimit.decorators import ratelimit
 from django.utils.decorators import method_decorator
 # Others
-from .services.signup import handle_step_one, handle_step_two, handle_step_three, handle_resend_otp
+from .services.signup import handle_step_one, handle_step_two, handle_step_three, handle_resend_otp, handle_restart_signup
 from .services.reset_password_link import create_reset_password_link, handle_reset_password_link
 from authentication.services.emails.send_email_service import send_email_otp
 from django.http import Http404
@@ -87,10 +87,7 @@ class SignupView(View):
         action = request.POST.get("action")
 
         if action == "restart_signup":
-            request.session.pop("signup_step", None)
-            request.session.pop("pending_auth_user", None)
-
-            return redirect("signup")
+            return handle_restart_signup(request)
 
         step = int(request.POST.get('step', 1))
         limited = getattr(request, "limited", False)
