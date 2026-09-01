@@ -8,3 +8,4 @@ wheels/
 .venv
 .env
 db.sqlite3
+*.sock
